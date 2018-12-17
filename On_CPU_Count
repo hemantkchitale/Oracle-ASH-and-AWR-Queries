@@ -1,0 +1,9 @@
+select h.sample_time, count(*) cnt
+from dba_hist_active_sess_history h, dba_hist_snapshot s
+where h.snap_id=s.snap_id
+and h.dbid=s.dbid
+and s.dbid=(select dbid  from v$database)
+and h.session_State = 'ON CPU'
+and s.begin_interval_time >  sysdate-60
+group by h.sample_time
+order by 1
