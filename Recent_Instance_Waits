@@ -1,3 +1,6 @@
+REM Recent Waits by Wait Event  
+REM This assumes that V$ACTIVE_SESSION_HISTORY has 12 hours of information, if less information is available, only that much will be reported.
+REM
 select session_state, event, occurrences, round( (occurrences*100)/(sum(occurrences) over ()),2 ) Perc_of_Sum
 from
 (
