@@ -1,0 +1,7 @@
+select u.username, count(*) cnt, round((count(*)*100)/(sum(count(*)) over ()),2) Perc_of_Sum
+from dba_hist_active_sess_history h, dba_users u
+where sample_time > sysdate-0.5
+and h.user_id=u.user_id
+and session_State = 'ON CPU'
+group by  username
+order by 3 desc
