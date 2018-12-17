@@ -1,3 +1,8 @@
+REM Recent CPU Consumers by User (identified by user session being ON CPU).  
+REM This assumes 
+REM (a) V$ACTIVE_SESSION_HISTORY has 12hours of information; if lesser information is available, only that much will be reported 
+REM (b) database sessions are differentiated by USERNAME and are not using Shared Usernames.
+REM
 select u.username, count(*) cnt, round((count(*)*100)/(sum(count(*)) over ()),2) Perc_of_Sum
 from dba_hist_active_sess_history h, dba_users u
 where sample_time > sysdate-0.5
