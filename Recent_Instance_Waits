@@ -1,0 +1,10 @@
+select session_state, event, occurrences, round( (occurrences*100)/(sum(occurrences) over ()),2 ) Perc_of_Sum
+from
+(
+select  session_state, event, count(*) occurrences
+from v$active_session_history
+where 1=1
+and sample_time > sysdate-0.5
+group by session_state, event
+)
+order by 1, 3 desc
