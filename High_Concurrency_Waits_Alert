@@ -1,0 +1,17 @@
+select Instance_Name, Host_Name, SysTimeStamp, Sampling_10_Minutes,  Wait_Class
+from
+(
+select 'Last_10_Minutes' Sampling_10_Minutes, sample_time, wait_class, count(*) as waiting_count
+from v$active_Session_history
+where sample_time > sysdate-10/1440 -- sampling the last 10 minutes
+and (
+         (wait_class is not null)
+      and wait_class = 'Concurrency'
+     )
+group by sample_time, wait_class
+having count(*) > 0 -- at least 1 session waiting
+),
+v$instance
+group by Instance_Name, Host_Name, Sampling_10_Minutes, wait_class
+having count(*) > ((60*10)/2) -- half the samples
+/
