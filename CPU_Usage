@@ -1,0 +1,34 @@
+select  a.instance_number, a.snap_id, a.begin_interval_time, a.end_interval_time, 
+trunc(
+(a.busy_time-b.busy_time)/
+(16*
+(
+extract(hour from (a.end_interval_time - a.begin_interval_time)) *3600 
++
+extract(minute from (a.end_interval_time - a.begin_interval_time)) *60
++
+extract(second from (a.end_interval_time - a.begin_interval_time))
+)
+)
+,2) Busy_Percentage
+from
+(
+select s.snap_id, s.instance_number, s.begin_interval_time, s.end_interval_time,
+t.value busy_time
+from dba_hist_osstat t, dba_hist_snapshot  s
+where t.snap_id=s.snap_id
+and t.instance_number=s.instance_number
+and t.stat_name = 'BUSY_TIME'
+) a,
+(
+select s.snap_id, s.instance_number, s.begin_interval_time, s.end_interval_time,
+t.value busy_time
+from dba_hist_osstat t, dba_hist_snapshot  s
+where t.snap_id=s.snap_id
+and t.instance_number=s.instance_number
+and t.stat_name = 'BUSY_TIME'
+) b
+where a.snap_id=b.snap_id+1
+and a.instance_number=b.instance_number
+and a.begin_interval_time > sysdate-21
+order by 1,2
