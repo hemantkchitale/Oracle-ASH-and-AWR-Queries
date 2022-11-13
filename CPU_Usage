@@ -1,4 +1,6 @@
-REM  Hard-coded number of CPUs as 16 in line 4 (line 15 after accounting for this REM line)
+REM  Hard-coded number of CPUs as 16 in line 4 
+REM  A work-in-progress
+REM  Let me know if you find bugs / inconsistencies
 select  a.instance_number, a.snap_id, a.begin_interval_time, a.end_interval_time, 
 trunc(
 (a.busy_time-b.busy_time)/
